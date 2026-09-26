@@ -1,0 +1,11 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+lab2a.pdf
+
+session-ses_f24a.md
+.codegraph/
+.codegraph
