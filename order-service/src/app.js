@@ -1,5 +1,10 @@
 const dns = require("dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]); // Buộc Node.js dùng DNS Google để phân giải MongoDB SRV
+require("dotenv").config();
+
+// Chỉ thiết lập Google DNS khi dùng kết nối MongoDB Atlas (SRV) trên môi trường phát triển cục bộ
+if (process.env.MONGODB_URI && process.env.MONGODB_URI.startsWith("mongodb+srv://")) {
+  dns.setServers(["8.8.8.8", "8.8.4.4"]);
+}
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -10,7 +15,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger/swagger");
 const orderRoutes = require("./routes/orderRoutes");
 const errorHandler = require("./middleware/errorHandler");
-require("dotenv").config();
 
 const app = express();
 

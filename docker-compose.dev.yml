@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  product-service:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./product-service/src:/app/src
+    command: ["npm", "run", "dev"]
+
+  order-service:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./order-service/src:/app/src
+    command: ["npm", "run", "dev"]
+
+  api-gateway:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./api-gateway/src:/app/src
+    command: ["npm", "run", "dev"]
