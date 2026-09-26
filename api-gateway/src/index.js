@@ -22,12 +22,46 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// 3. Health check của Gateway
+const productServiceUrl = process.env.PRODUCT_SERVICE_URL?.replace(/\/+$/, "") || "http://localhost:3001";
+const orderServiceUrl = process.env.ORDER_SERVICE_URL?.replace(/\/+$/, "") || "http://localhost:3002";
+
+// 3. Root & Documentation Routes
+app.get("/", (req, res) => {
+  res.json({
+    message: "Microservices Shop API Gateway is running!",
+    gateway: true,
+    services: {
+      products: `${productServiceUrl}/api/products`,
+      orders: `${orderServiceUrl}/api/orders`,
+      productSwagger: `${productServiceUrl}/api-docs`,
+      orderSwagger: `${orderServiceUrl}/api-docs`,
+    },
+    routes: [
+      { path: "/health", description: "Gateway health check" },
+      { path: "/api-docs", description: "Redirect to Product Service Swagger UI" },
+      { path: "/api-docs/orders", description: "Redirect to Order Service Swagger UI" },
+      { path: "/api/products", description: "Product Service proxy endpoints" },
+      { path: "/api/orders", description: "Order Service proxy endpoints" },
+    ],
+  });
+});
+
+// Redirect /api-docs to Product Service Swagger
+app.get("/api-docs", (req, res) => {
+  res.redirect(`${productServiceUrl}/api-docs`);
+});
+
+// Redirect /api-docs/orders to Order Service Swagger
+app.get("/api-docs/orders", (req, res) => {
+  res.redirect(`${orderServiceUrl}/api-docs`);
+});
+
+// Health check của Gateway
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     gateway: true,
-    service: process.env.SERVICE_NAME,
+    service: process.env.SERVICE_NAME || "api-gateway",
     uptime: process.uptime(),
   });
 });
@@ -35,7 +69,7 @@ app.get("/health", (req, res) => {
 // 4. Reverse Proxy sang Product Service (Port 3001)
 app.use(
   createProxyMiddleware({
-    target: process.env.PRODUCT_SERVICE_URL,
+    target: productServiceUrl,
     changeOrigin: true,
     pathFilter: "/api/products",
     on: {
@@ -53,7 +87,7 @@ app.use(
 // 5. Reverse Proxy sang Order Service (Port 3002)
 app.use(
   createProxyMiddleware({
-    target: process.env.ORDER_SERVICE_URL,
+    target: orderServiceUrl,
     changeOrigin: true,
     pathFilter: "/api/orders",
     on: {
@@ -72,6 +106,6 @@ app.use(
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(` API Gateway đang chạy trên cổng ${PORT}`);
-  console.log(`- /api/products -> ${process.env.PRODUCT_SERVICE_URL}`);
-  console.log(`- /api/orders   -> ${process.env.ORDER_SERVICE_URL}`);
+  console.log(`- /api/products -> ${productServiceUrl}`);
+  console.log(`- /api/orders   -> ${orderServiceUrl}`);
 });
