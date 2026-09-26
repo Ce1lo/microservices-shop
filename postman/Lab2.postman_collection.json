@@ -1,0 +1,364 @@
+{
+  "info": {
+    "_postman_id": "lab2-microservices-shop-collection",
+    "name": "Lab2 Microservices",
+    "description": "Postman Collection hoàn chỉnh kiểm thử Microservices Shop (Product Service, Order Service, API Gateway)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "product_url",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "order_url",
+      "value": "http://localhost:3002",
+      "type": "string"
+    },
+    {
+      "key": "sample_order_id",
+      "value": "6ab737faa46ef25a35cdbe5e",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Gateway Health",
+      "item": [
+        {
+          "name": "Health Check - API Gateway",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/health",
+              "host": ["{{gateway_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Health Check - Product Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{product_url}}/health",
+              "host": ["{{product_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Health Check - Order Service",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{order_url}}/health",
+              "host": ["{{order_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "GET /api/products (Pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/products?page=1&limit=5",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/products (Search & Price Filter)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/products?search=iphone&minPrice=20000000&sortBy=price&order=desc",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "search", "value": "iphone" },
+                { "key": "minPrice", "value": "20000000" },
+                { "key": "sortBy", "value": "price" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/products/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/products/1",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "1"]
+            }
+          }
+        },
+        {
+          "name": "GET /api/products/999 (404 Not Found)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/products/999",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "999"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/products (Create Product)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MacBook Pro 16 M3 Max\",\n  \"price\": 89990000,\n  \"stock\": 15,\n  \"description\": \"Apple M3 Max Chip, 36GB RAM, 1TB SSD\",\n  \"categoryId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/products",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/products (422 Validation Error)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"price\": -5000\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/products",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products"]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/products/:id",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 26990000,\n  \"stock\": 45\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/products/1",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/products/:id (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/products/2",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "POST /api/orders (Create Order)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"customerName\": \"Nguyen Van A\",\n  \"customerEmail\": \"vana@example.com\",\n  \"items\": [\n    {\n      \"productId\": 1,\n      \"productName\": \"iPhone 15 Pro\",\n      \"price\": 27990000,\n      \"quantity\": 2\n    },\n    {\n      \"productId\": 2,\n      \"productName\": \"Samsung Galaxy S24\",\n      \"price\": 22990000,\n      \"quantity\": 1\n    }\n  ],\n  \"shippingAddress\": {\n    \"street\": \"123 Nguyen Trai\",\n    \"district\": \"Quan 5\",\n    \"city\": \"TP Ho Chi Minh\"\n  },\n  \"note\": \"Giao trong gio hanh chinh\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/orders",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/orders (422 Validation Error)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"abc\",\n  \"customerEmail\": \"sai_dinh_dang_email\",\n  \"items\": []\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/orders",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders"]
+            }
+          }
+        },
+        {
+          "name": "GET /api/orders/customer/:customerId (Pagination & Filter)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/orders/customer/1?page=1&limit=10",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders", "customer", "1"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/orders/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/orders/{{sample_order_id}}",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders", "{{sample_order_id}}"]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/orders/:id/status (Confirm Order)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmed\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/orders/{{sample_order_id}}/status",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders", "{{sample_order_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/orders/:id/status (422 Invalid Status)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"invalid_status_value\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/orders/{{sample_order_id}}/status",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "orders", "{{sample_order_id}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth (Mock / Bonus)",
+      "item": [
+        {
+          "name": "POST /api/auth/register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nguyen Van A\",\n  \"email\": \"vana@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/register",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/auth/login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vana@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "POST /api/auth/refresh",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"sample_refresh_token_here\"\n}"
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/refresh",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "GET /api/auth/me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/me",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
