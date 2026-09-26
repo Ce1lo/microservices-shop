@@ -38,13 +38,12 @@ const OrderSchema = new mongoose.Schema({
 });
 
 // 3. Pre-save hook: Tự sinh mã đơn hàng trước khi lưu vào DB (nếu chưa có)
-OrderSchema.pre("save", async function (next) {
+OrderSchema.pre("save", async function () {
   if (!this.orderCode) {
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // Ví dụ: 20260926
     const count = await mongoose.model("Order").countDocuments();
     this.orderCode = `ORD-${date}-${String(count + 1).padStart(4, "0")}`;
   }
-  next();
 });
 
 // 4. Virtual field: Tính tổng số lượng sản phẩm (không lưu vào DB, tự tính khi gọi)

@@ -34,10 +34,10 @@ app.get("/health", (req, res) => {
 
 // 4. Reverse Proxy sang Product Service (Port 3001)
 app.use(
-  "/api/products",
   createProxyMiddleware({
     target: process.env.PRODUCT_SERVICE_URL,
     changeOrigin: true,
+    pathFilter: "/api/products",
     on: {
       error: (err, req, res) => {
         console.error("Lỗi kết nối Product Service:", err.message);
@@ -52,10 +52,10 @@ app.use(
 
 // 5. Reverse Proxy sang Order Service (Port 3002)
 app.use(
-  "/api/orders",
   createProxyMiddleware({
     target: process.env.ORDER_SERVICE_URL,
     changeOrigin: true,
+    pathFilter: "/api/orders",
     on: {
       error: (err, req, res) => {
         console.error("Lỗi kết nối Order Service:", err.message);
